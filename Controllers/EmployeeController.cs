@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using DTO;
 using Errors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +22,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("employees/{id}")]
-    public IActionResult GetEmployee(int id)
+    public IActionResult GetEmployeeById(int id)
     {
         var employee = _context.Employees.Find(id);
         if (employee == null)
@@ -28,5 +30,23 @@ public class EmployeeController : ControllerBase
             throw new EmployeeNotFoundException(id);
         }
         return Ok(employee);
+    }
+
+    [HttpPost("create_employee")]
+    public async Task<IActionResult> PostEmployee(CreateEmployeeDto dto)
+    {
+        var employee = new Employee
+        {
+            FirstName = dto.FirstName,
+            SecondName = dto.SecondName,
+            JobRole = dto.JobRole,
+            Band = dto.Band,
+            Salary = dto.Salary
+        };
+
+        await _context.Employees.AddAsync(employee);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, employee);
     }
 } 
