@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using DTO;
 using Errors;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +32,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPost("create_employee")]
-    public async Task<IActionResult> PostEmployee(CreateEmployeeDto dto)
+    public async Task<IActionResult> PostEmployee(EmployeeDto dto)
     {
         var employee = new Employee
         {
@@ -48,6 +47,27 @@ public class EmployeeController : ControllerBase
         await _context.SaveChangesAsync();
 
         return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, employee);
+    }
+
+    [HttpPut("modify_employee/{id}")]
+    public async Task<IActionResult> PutEmployee(int id, EmployeeDto dto)
+    {
+        var employee = await _context.Employees.FindAsync(id);
+
+        if (employee == null)
+        {
+            throw new EmployeeNotFoundException(id);
+        }
+
+        employee.FirstName = dto.FirstName;
+        employee.SecondName = dto.SecondName;
+        employee.JobRole = dto.JobRole;
+        employee.Band = dto.Band;
+        employee.Salary = dto.Salary;
+
+        await _context.SaveChangesAsync();
+
+        return NoContent();
     }
 
     [HttpDelete("delete_employee/{id}")]

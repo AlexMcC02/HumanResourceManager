@@ -1,6 +1,6 @@
 namespace DTO;
 
-public class CreateEmployeeDto
+public class EmployeeDto
 {
     public required string FirstName { get; set; }
     public required string SecondName { get; set; }
