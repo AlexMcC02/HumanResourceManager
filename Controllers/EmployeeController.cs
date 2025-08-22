@@ -49,4 +49,20 @@ public class EmployeeController : ControllerBase
 
         return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, employee);
     }
+
+    [HttpDelete("delete_employee/{id}")]
+    public async Task<IActionResult> DeleteEmployee(int id)
+    {
+        var employee = await _context.Employees.FindAsync(id);
+
+        if (employee == null)
+        {
+            throw new EmployeeNotFoundException(id);
+        }
+
+        _context.Remove(employee);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 } 
