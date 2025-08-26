@@ -1,7 +1,9 @@
 using HumanResourceManager.DTO;
 using HumanResourceManager.Exceptions;
 using HumanResourceManager.Models;
+using HumanResourceManager.Query;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HumanResourceManager.Controllers;
 
@@ -17,10 +19,52 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("employees")]
-    public IActionResult GetEmployees()
+    public async Task<IActionResult> GetEmployees([FromQuery] EmployeeQueryParameters queryParams)
     {
-        var employees = _context.Employees.ToList();
-        return Ok(employees);
+        var employees = _context.Employees.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(queryParams.JobRole))
+        {
+            employees = employees.Where(e => e.JobRole.Contains(queryParams.JobRole));
+        }
+
+        if (!string.IsNullOrWhiteSpace(queryParams.Band))
+        {
+            if (Enum.TryParse<Band>(queryParams.Band, true, out var bandEnum))
+            {
+                employees = employees.Where(e => e.Band == bandEnum);
+            }
+            else
+            {
+                throw new InvalidBandValueException(queryParams.Band);
+            }
+        }
+
+        if (queryParams.MinSalary.HasValue)
+        {
+            employees = employees.Where(e => e.Salary >= queryParams.MinSalary);
+        }
+
+        if (queryParams.MaxSalary.HasValue)
+        {
+            employees = employees.Where(e => e.Salary <= queryParams.MaxSalary);
+        }
+
+        if (employees.Any())
+        {
+
+            var skip = (queryParams.Page - 1) * queryParams.PageSize;
+            var paginatedEmployees = await employees
+                .Skip(skip)
+                .Take(queryParams.PageSize)
+                .ToListAsync();
+
+            return Ok(paginatedEmployees);
+        }
+        else
+        {
+            throw new EmployeesNotFoundException();
+        }
     }
 
     [HttpGet("employees/{id}")]
