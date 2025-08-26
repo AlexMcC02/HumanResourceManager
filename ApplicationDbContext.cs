@@ -1,6 +1,7 @@
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using HumanResourceManager.Models;
 
 public class ApplicationDbContext : DbContext
 {

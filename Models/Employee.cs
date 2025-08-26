@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+namespace HumanResourceManager.Models;
+
 [Table("employees")]
 public class Employee
 {

@@ -1,6 +1,6 @@
-using Errors;
+using HumanResourceManager.Exceptions;
 
-namespace Middleware;
+namespace HumanResourceManager.Middleware;
 
 public class ErrorHandlingMiddleware
 {

@@ -1,3 +1,5 @@
+namespace HumanResourceManager.Models;
+
 public enum Band
 {
     Trainee,

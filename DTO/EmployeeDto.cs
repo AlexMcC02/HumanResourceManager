@@ -1,4 +1,6 @@
-namespace DTO;
+using HumanResourceManager.Models;
+
+namespace HumanResourceManager.DTO;
 
 public class EmployeeDto
 {

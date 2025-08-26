@@ -1,6 +1,9 @@
-using DTO;
-using Errors;
+using HumanResourceManager.DTO;
+using HumanResourceManager.Exceptions;
+using HumanResourceManager.Models;
 using Microsoft.AspNetCore.Mvc;
+
+namespace HumanResourceManager.Controllers;
 
 [ApiController]
 [Route("/human_resource_manager/api/")]

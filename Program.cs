@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Middleware;
+using HumanResourceManager.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
