@@ -3,7 +3,6 @@ using HumanResourceManager.Exceptions;
 using HumanResourceManager.Models;
 using HumanResourceManager.Query;
 using HumanResourceManager.Validators;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -70,13 +69,9 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("employees/{id}")]
-    public IActionResult GetEmployeeById(int id)
+    public async Task<IActionResult> GetEmployeeById(int id)
     {
-        var employee = _context.Employees.Find(id);
-        if (employee == null)
-        {
-            throw new EmployeeNotFoundException(id);
-        }
+        var employee = await _context.Employees.FindAsync(id) ?? throw new EmployeeNotFoundException(id);
         return Ok(employee);
     }
 
