@@ -121,15 +121,32 @@ public class EmployeeController : ControllerBase
             throw new EmployeeNotFoundException(id);
         }
 
-        employee.FirstName = dto.FirstName;
-        employee.SecondName = dto.SecondName;
-        employee.JobRole = dto.JobRole;
-        employee.Band = dto.Band;
-        employee.Salary = dto.Salary;
+        var employeeDtoValidator = new EmployeeDtoValidator();
+        var validationResult = employeeDtoValidator.Validate(dto);
 
-        await _context.SaveChangesAsync();
+        if (!validationResult.IsValid)
+        {
+            var listOfErrors = "";
 
-        return NoContent();
+            foreach (var error in validationResult.Errors)
+            {
+                listOfErrors += $"Property {error.PropertyName} failed validation. Error was {error.ErrorMessage} ";
+            }
+
+            throw new EmployeeNotValidException(listOfErrors);
+        }
+        else
+        {
+            employee.FirstName = dto.FirstName;
+            employee.SecondName = dto.SecondName;
+            employee.JobRole = dto.JobRole;
+            employee.Band = dto.Band;
+            employee.Salary = dto.Salary;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 
     [HttpDelete("delete_employee/{id}")]
