@@ -2,6 +2,8 @@ using HumanResourceManager.DTO;
 using HumanResourceManager.Exceptions;
 using HumanResourceManager.Models;
 using HumanResourceManager.Query;
+using HumanResourceManager.Validators;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -90,10 +92,28 @@ public class EmployeeController : ControllerBase
             Salary = dto.Salary
         };
 
-        await _context.Employees.AddAsync(employee);
-        await _context.SaveChangesAsync();
+        var employeeValidator = new EmployeeValidator();
+        var validationResult = employeeValidator.Validate(employee);
 
-        return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, employee);
+        if (!validationResult.IsValid)
+        {
+            var listOfErrors = "";
+
+            foreach (var error in validationResult.Errors)
+            {
+                listOfErrors += $"Property {error.PropertyName} failed validation. Error was {error.ErrorMessage} ";
+            }
+
+            throw new EmployeeNotValidException(listOfErrors);
+        }
+        else
+        {
+
+            await _context.Employees.AddAsync(employee);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, employee);
+        }
     }
 
     [HttpPut("modify_employee/{id}")]
