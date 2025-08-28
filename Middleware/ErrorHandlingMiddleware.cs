@@ -27,6 +27,11 @@ public class ErrorHandlingMiddleware
             context.Response.StatusCode = 404;
             await context.Response.WriteAsJsonAsync(new { error = ex.Message });
         }
+        catch (UserNotFoundException ex)
+        {
+            context.Response.StatusCode = 404;
+            await context.Response.WriteAsJsonAsync(new { error = ex.Message });
+        }
         catch (EmployeeNotValidException ex)
         {
             context.Response.StatusCode = 400;

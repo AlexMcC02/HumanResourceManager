@@ -10,11 +10,10 @@ public static class JwtTokenGenerator
     public static string Generate(string username)
     {
         var claims = new[] {
-            new Claim(JwtRegisteredClaimNames.Sub, username),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new Claim(JwtRegisteredClaimNames.Sub, username)
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superdupersecretkey12345"));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("a-string-secret-at-least-256-bits-long"));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(

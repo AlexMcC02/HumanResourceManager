@@ -114,13 +114,7 @@ public class EmployeeController : ControllerBase
     [HttpPut("modify_employee/{id}")]
     public async Task<IActionResult> PutEmployee(int id, EmployeeDto dto)
     {
-        var employee = await _context.Employees.FindAsync(id);
-
-        if (employee == null)
-        {
-            throw new EmployeeNotFoundException(id);
-        }
-
+        var employee = await _context.Employees.FindAsync(id) ?? throw new EmployeeNotFoundException(id);
         var employeeDtoValidator = new EmployeeDtoValidator();
         var validationResult = employeeDtoValidator.Validate(dto);
 
@@ -152,13 +146,7 @@ public class EmployeeController : ControllerBase
     [HttpDelete("delete_employee/{id}")]
     public async Task<IActionResult> DeleteEmployee(int id)
     {
-        var employee = await _context.Employees.FindAsync(id);
-
-        if (employee == null)
-        {
-            throw new EmployeeNotFoundException(id);
-        }
-
+        var employee = await _context.Employees.FindAsync(id) ?? throw new EmployeeNotFoundException(id);
         _context.Remove(employee);
         await _context.SaveChangesAsync();
 
