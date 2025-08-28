@@ -3,6 +3,7 @@ using HumanResourceManager.Exceptions;
 using HumanResourceManager.Models;
 using HumanResourceManager.Query;
 using HumanResourceManager.Validators;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,7 @@ public class EmployeeController : ControllerBase
         _context = context;
     }
 
+    [AllowAnonymous]
     [HttpGet("employees")]
     public async Task<IActionResult> GetEmployees([FromQuery] EmployeeQueryParameters queryParams)
     {
@@ -68,6 +70,7 @@ public class EmployeeController : ControllerBase
         }
     }
 
+    [AllowAnonymous]
     [HttpGet("employees/{id}")]
     public async Task<IActionResult> GetEmployeeById(int id)
     {
@@ -75,6 +78,7 @@ public class EmployeeController : ControllerBase
         return Ok(employee);
     }
 
+    [Authorize]
     [HttpPost("create_employee")]
     public async Task<IActionResult> PostEmployee(EmployeeDto dto)
     {
@@ -111,6 +115,7 @@ public class EmployeeController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPut("modify_employee/{id}")]
     public async Task<IActionResult> PutEmployee(int id, EmployeeDto dto)
     {
@@ -143,6 +148,7 @@ public class EmployeeController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpDelete("delete_employee/{id}")]
     public async Task<IActionResult> DeleteEmployee(int id)
     {

@@ -2,6 +2,7 @@ using HumanResourceManager.Auth;
 using HumanResourceManager.Exceptions;
 using HumanResourceManager.Models;
 using HumanResourceManager.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HumanResourceManager.Controllers;
@@ -17,6 +18,7 @@ public class AuthController : ControllerBase
         _userService = userService;
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginRequest request)
     {
