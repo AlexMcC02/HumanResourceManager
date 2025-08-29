@@ -12,10 +12,12 @@ namespace HumanResourceManager.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IUserService userService)
+    public AuthController(IUserService userService, ILogger<AuthController> logger)
     {
         _userService = userService;
+        _logger = logger;
     }
 
     [AllowAnonymous]
@@ -26,11 +28,13 @@ public class AuthController : ControllerBase
 
         if (user == null)
         {
+            _logger.LogError("Login failed, the user could not be found.");
             throw new UserNotFoundException(request.Username, request.Password);
         }
 
         var token = JwtTokenGenerator.Generate(user.Username);
 
+        _logger.LogInformation($"{user.Username} has logged in successfully.");
         return Ok(new { jwt = token });
     }
 }

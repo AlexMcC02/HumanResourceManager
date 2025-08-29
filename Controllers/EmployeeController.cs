@@ -14,10 +14,12 @@ namespace HumanResourceManager.Controllers;
 public class EmployeeController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
+    private readonly ILogger<EmployeeController> _logger;
 
-    public EmployeeController(ApplicationDbContext context)
+    public EmployeeController(ApplicationDbContext context, ILogger<EmployeeController> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     [AllowAnonymous]
@@ -39,6 +41,7 @@ public class EmployeeController : ControllerBase
             }
             else
             {
+                _logger.LogError("An invalid band was passed into the GetEmployees endpoint.");
                 throw new InvalidBandValueException(queryParams.Band);
             }
         }
@@ -62,7 +65,9 @@ public class EmployeeController : ControllerBase
                 .Take(queryParams.PageSize)
                 .ToListAsync();
 
+            _logger.LogInformation("Fetched a paginated list of employees.");
             return Ok(paginatedEmployees);
+            
         }
         else
         {
@@ -74,7 +79,15 @@ public class EmployeeController : ControllerBase
     [HttpGet("employees/{id}")]
     public async Task<IActionResult> GetEmployeeById(int id)
     {
-        var employee = await _context.Employees.FindAsync(id) ?? throw new EmployeeNotFoundException(id);
+        var employee = await _context.Employees.FindAsync(id);
+
+        if (employee == null)
+        {
+            _logger.LogError($"The employee with ID of {id} could not be found.");
+            throw new EmployeeNotFoundException(id);
+        }
+
+        _logger.LogInformation($"Employee {employee.FirstName} {employee.SecondName} was retrieved successfully.");
         return Ok(employee);
     }
 
@@ -103,6 +116,7 @@ public class EmployeeController : ControllerBase
                 listOfErrors += $"Property {error.PropertyName} failed validation. Error was {error.ErrorMessage} ";
             }
 
+            _logger.LogError("The employee to be created did not pass validation.");
             throw new EmployeeNotValidException(listOfErrors);
         }
         else
@@ -111,6 +125,7 @@ public class EmployeeController : ControllerBase
             await _context.Employees.AddAsync(employee);
             await _context.SaveChangesAsync();
 
+            _logger.LogInformation($"Employee {employee.FirstName} {employee.SecondName} created succesfully.");
             return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, employee);
         }
     }
@@ -132,6 +147,7 @@ public class EmployeeController : ControllerBase
                 listOfErrors += $"Property {error.PropertyName} failed validation. Error was {error.ErrorMessage} ";
             }
 
+            _logger.LogError("The employee to be modified did not pass validation.");
             throw new EmployeeNotValidException(listOfErrors);
         }
         else
@@ -144,6 +160,7 @@ public class EmployeeController : ControllerBase
 
             await _context.SaveChangesAsync();
 
+            _logger.LogInformation($"Employee {employee.FirstName} {employee.SecondName} modified succesfully.");
             return NoContent();
         }
     }
@@ -152,10 +169,18 @@ public class EmployeeController : ControllerBase
     [HttpDelete("delete_employee/{id}")]
     public async Task<IActionResult> DeleteEmployee(int id)
     {
-        var employee = await _context.Employees.FindAsync(id) ?? throw new EmployeeNotFoundException(id);
+        var employee = await _context.Employees.FindAsync(id);
+
+        if (employee == null)
+        {
+            _logger.LogError($"The employee with ID of {id} could not be deleted, as it does not exist.");
+            throw new EmployeeNotFoundException(id);
+        }
+        
         _context.Remove(employee);
         await _context.SaveChangesAsync();
 
+        _logger.LogInformation($"Employee with ID of {id} deleted successfully.");
         return NoContent();
     }
 } 

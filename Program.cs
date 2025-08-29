@@ -72,8 +72,12 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-// app.UseDeveloperExceptionPage();
+var logEverything = false;
+if (logEverything) app.UseDeveloperExceptionPage();
+else app.Logger.LogWarning("Developer exception page is currently disabled, is this the desired behaviour?");
 
+app.Logger.LogInformation("Mapping controller endpoints...");
 app.MapControllers();
 
+app.Logger.LogInformation("Booting up application...");
 app.Run();
