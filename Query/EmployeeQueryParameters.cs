@@ -7,5 +7,5 @@ public class EmployeeQueryParameters
     public int? MinSalary { get; set; }
     public int? MaxSalary { get; set; }
     public int Page { get; set; } = 1;
-    public int PageSize { get; set; } = 5;
+    public int PageSize { get; set; } = 10;
 }
