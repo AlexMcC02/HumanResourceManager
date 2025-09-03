@@ -15,6 +15,8 @@ public class ApplicationDbContext : DbContext
 
     private void SeedDatabase()
     {
+        if (Employees.Any()) return;
+
         var rnd = new Random();
         string[] firstNames = ["Alex", "Stephen", "Jacob", "Mary", "Bob", "Alice", "Karen", "Samuel", "Lee", "Dylan"];
         string[] secondNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Garcia", "Rodriguez", "Wilson"];
