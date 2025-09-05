@@ -2,6 +2,7 @@ using HumanResourceManager.Auth;
 using HumanResourceManager.Exceptions;
 using HumanResourceManager.Models;
 using HumanResourceManager.Services;
+using HumanResourceManager.Validators;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,14 +43,13 @@ public class AuthController : ControllerBase
     [HttpGet("logout")]
     public IActionResult Logout()
     {
-        // Access current jwt token.
         var token = Request.Headers.Authorization.ToString().Replace("Bearer ", "");
 
         if (string.IsNullOrEmpty(token))
         {
             return BadRequest(new { message = "JWT token is missing" });
         }
-        // Add it to the blacklist.
+
         _userService.AddTokenToBlacklist(token);
 
         _logger.LogInformation("User logged out, token added to blacklist.");

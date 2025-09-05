@@ -1,5 +1,6 @@
 using HumanResourceManager.Middleware;
 using HumanResourceManager.Services;
+using HumanResourceManager.Validators;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -29,6 +30,7 @@ builder.Services.AddAuthentication("Bearer")
     });
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ValidJwtFilter>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -83,7 +85,7 @@ app.UseAuthorization();
 
 app.UseCors("AllowAllOrigins");
 
-var logEverything = false;
+var logEverything = true;
 if (logEverything) app.UseDeveloperExceptionPage();
 else app.Logger.LogWarning("Developer exception page is currently disabled, is this the desired behaviour?");
 

@@ -93,6 +93,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize]
     [HttpPost("create_employee")]
+    [ServiceFilter(typeof(ValidJwtFilter))]
     public async Task<IActionResult> PostEmployee(EmployeeDto dto)
     {
         var employee = new Employee
@@ -132,6 +133,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize]
     [HttpPut("modify_employee/{id}")]
+    [ServiceFilter(typeof(ValidJwtFilter))]
     public async Task<IActionResult> PutEmployee(int id, EmployeeDto dto)
     {
         var employee = await _context.Employees.FindAsync(id) ?? throw new EmployeeNotFoundException(id);
@@ -167,6 +169,7 @@ public class EmployeeController : ControllerBase
 
     [Authorize]
     [HttpDelete("delete_employee/{id}")]
+    [ServiceFilter(typeof(ValidJwtFilter))]
     public async Task<IActionResult> DeleteEmployee(int id)
     {
         var employee = await _context.Employees.FindAsync(id);
@@ -176,7 +179,7 @@ public class EmployeeController : ControllerBase
             _logger.LogError($"The employee with ID of {id} could not be deleted, as it does not exist.");
             throw new EmployeeNotFoundException(id);
         }
-        
+
         _context.Remove(employee);
         await _context.SaveChangesAsync();
 
