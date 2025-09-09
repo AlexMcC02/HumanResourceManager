@@ -85,7 +85,7 @@ app.UseAuthorization();
 
 app.UseCors("AllowAllOrigins");
 
-var logEverything = true;
+var logEverything = false;
 if (logEverything) app.UseDeveloperExceptionPage();
 else app.Logger.LogWarning("Developer exception page is currently disabled, is this the desired behaviour?");
 

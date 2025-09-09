@@ -30,7 +30,7 @@ public class AuthController : ControllerBase
         if (user == null)
         {
             _logger.LogError("Login failed, the user could not be found.");
-            throw new UserNotFoundException(request.Username, request.Password);
+            throw new UserNotFoundException();
         }
 
         var token = JwtTokenGenerator.Generate(user.Username);
